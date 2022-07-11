@@ -1,0 +1,11 @@
+$ json-server --watch server/contacts.json 
+npx json-server --watch data/db.json --port 8000
+
+
+npx create-react-app my-app --template redux
+npm i react-router-dom
+npm i axios react-toastify
+npm install react-bootstrap bootstrap
+npm install react-icons --save
+
+Simple React Snippets
