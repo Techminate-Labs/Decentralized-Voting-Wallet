@@ -13,18 +13,11 @@ const [pubKey, setPubKey] = useState('');
 const [priKey, setPriKey] = useState('');
 const [message, setMessage] = useState(null);
 
-function generateWallet() {
-  //Key pair should be generated if nid validation is successful
-  const key = ec.genKeyPair();
-  const publicKey = key.getPublic('hex');
-  const privateKey = key.getPrivate('hex');
-
-  const voterInfo = {
-      'Public_key' : publicKey,
-      'Private_key' : privateKey
-  }
-
-  return voterInfo;
+const closeAlert = () => {
+  setPubKey('');
+  setPriKey('');
+  setNid('');
+  setMessage('');
 }
 
 const handleSubmit = async (e) => {
@@ -42,16 +35,15 @@ const handleSubmit = async (e) => {
     const key = ec.genKeyPair();
     const publicKey = key.getPublic('hex');
     const privateKey = key.getPrivate('hex');
-    const keyPair = {
-      'Public_key' : publicKey,
-      'Private_key' : privateKey
-    }
-    console.log(keyPair)
-    setPubKey(publicKey);
-    setPriKey(privateKey);
 
     const dataVoter = {nid, publicKey}
-    console.log(dataVoter)
+    const res = await axios.post('http://127.0.0.1:8000/api/voterRegistration', JSON.stringify(dataVoter), config);
+    if(res){
+      console.log(res)
+      setPubKey(publicKey);
+      setPriKey(privateKey);
+      setMessage(res.data.message);
+    }
   }else{
     console.log(response.data.message)
     setMessage(response.data.message);
@@ -75,7 +67,7 @@ const handleSubmit = async (e) => {
       {message &&
       <div className="alert alert-warning alert-dismissible fade show mt-4" role="alert">
         {message}
-        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" className="btn-close" onClick={() =>closeAlert()}></button>
       </div>
       }
       {pubKey &&
@@ -83,7 +75,7 @@ const handleSubmit = async (e) => {
         <strong>Nid : </strong>{nid} <br />
         <strong>Public Key : </strong>{pubKey} <br />
         <strong>Private Key : </strong>{priKey}
-        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" className="btn-close" onClick={() =>closeAlert()}></button>
       </div>
       }
     </div>
