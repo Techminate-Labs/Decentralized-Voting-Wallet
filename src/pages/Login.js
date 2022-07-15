@@ -2,11 +2,8 @@ import { useState } from 'react';
 
 function Login() {
 
-    // const EdDSA = require('elliptic').eddsa
-    // const ec = new EdDSA('ed25519')
-
-    var EC = require('elliptic').ec;
-    var ec = new EC('secp256k1');
+    const EdDSA = require('elliptic').eddsa
+    const ec = new EdDSA('ed25519')
     
     const [nid, setNid] = useState('');
     const [pubKey, setPubKey] = useState('');
@@ -20,17 +17,16 @@ function Login() {
         setMessage('');
     }
 
-    // 0477541a0f1e7e2bab8495cd759423da6e1a03facada166b2b4c02933fcfd44da372660ad494300ab3c755fc3599f607b92112f190491c8958f4bf7df1f4844020
-
-    // d6742460a0db0bf13a695c49a241a1b09427d3efd6ceb2b8e60ed9dba674198b
-
+    // Public Key : efca40505b961f611c6db18ed7632caa29bea730b66bf3179a32749620be343e
+    // Private Key : 1173a41bce0403ed67d54b26b0927c9d2ed3be4479d99740adcf3253f7dbe78d
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // const keyPair = ec.keyFromSecret(priKey)
-        let keyPair = ec.keyFromPrivate(priKey)
+        const keyPair = ec.keyFromSecret(priKey)
         const publicKey = keyPair.getPublic('hex')
         console.log(publicKey);
         console.log(priKey);
+        
         setPriKey('');
     }
 

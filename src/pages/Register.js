@@ -3,8 +3,8 @@ import axios from 'axios'
 
 function Register() {
 
-const EC = require('elliptic').ec;
-const ec = new EC('secp256k1');
+const EdDSA = require('elliptic').eddsa
+const ec = new EdDSA('ed25519')
   
 const [nid, setNid] = useState('');
 const [pubKey, setPubKey] = useState('');
@@ -18,6 +18,8 @@ const closeAlert = () => {
   setMessage('');
 }
 
+const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
 const handleSubmit = async (e) => {
   e.preventDefault();
   const data = {nid}
@@ -30,9 +32,9 @@ const handleSubmit = async (e) => {
   const response = await axios.post('http://127.0.0.1:8000/api/validateNid', JSON.stringify(data), config);
  
   if(response.data.message === '404'){
-    const key = ec.genKeyPair();
-    const publicKey = key.getPublic('hex');
-    const privateKey = key.getPrivate('hex');
+    const privateKey = genRanHex(64);
+    const keyPair = ec.keyFromSecret(privateKey);
+    const publicKey = keyPair.getPublic('hex');
 
     const dataVoter = {nid, publicKey}
     const res = await axios.post('http://127.0.0.1:8000/api/voterRegistration', JSON.stringify(dataVoter), config);
