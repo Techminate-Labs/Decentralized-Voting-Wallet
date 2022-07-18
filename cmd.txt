@@ -7,5 +7,6 @@ npm i react-router-dom
 npm i axios react-toastify
 npm install react-bootstrap bootstrap
 npm install react-icons --save
+npm install crypto-js
 
 Simple React Snippets

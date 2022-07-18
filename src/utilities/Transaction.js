@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+const crypto = require('crypto-browserify');
 const EC = require('elliptic').ec;
 
 const ec = new EC('secp256k1');

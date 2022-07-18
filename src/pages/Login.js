@@ -30,10 +30,8 @@ function Login() {
 
         const response = await axios.get('http://127.0.0.1:8000/api/voterGetByPubKey/'+publicKey);
         if(response.data.query_status === '404'){
-            console.log(response.data.message);
             setMessage(response.data.message);
         }else if(response.data.query_status === '200'){
-            console.log(response.data.message);
             setMessage(response.data.message);
             const walletData = {
                 'nid':response.data.nid, 
