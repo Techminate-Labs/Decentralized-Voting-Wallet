@@ -6,15 +6,24 @@ function Vote() {
   const ec = new EdDSA('ed25519')
 
   const [candidate, setCandidate] = useState('');
-  const [voter, setVoter] = useState(null);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(candidate);
+    console.log('Candidate public key : ',candidate);
     const localData = localStorage.getItem('wallet');
-    if(localData){
-      setVoter(JSON.parse(localData));
-      const keyPair = ec.keyFromSecret(voter.private_key);
+    const voterData = JSON.parse(localData);
+    if(localData !== null){
+      const keyPair = ec.keyFromSecret(voterData.private_key);
+      const voterAddress = keyPair.getPublic('hex');
+      //might have a check in the db
+      const vote = voterData.vote;
+      console.log('Voter private key : ',voterData.private_key);
+      console.log('Voter public key : ',voterAddress);
+
+      //creating a vote
+      const txs = new Transaction(voterAddress, candidate, Number(vote));
+      const signature = txs.signTransaction(keyPair);
     }
 
   }
