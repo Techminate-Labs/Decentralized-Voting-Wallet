@@ -1,5 +1,6 @@
 var crypto = require("crypto-js");
 const EC = require('elliptic').ec;
+import crypto-js from 'crypto-js/sha256';
 
 const ec = new EC('secp256k1');
 
@@ -42,6 +43,8 @@ class Transaction {
 
     //Distinguished Encoding Rules, which is a binary format
     this.signature = sign.toDER('hex');
+
+    return this.signature;
   }
 
   isValid() {
