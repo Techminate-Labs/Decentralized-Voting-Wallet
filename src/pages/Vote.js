@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import sha256 from 'crypto-js/sha256';
 
 function Vote() {
-  
+  const Transaction = require('../utilities/Transaction');
   const EdDSA = require('elliptic').eddsa;
   const ec = new EdDSA('ed25519')
 
@@ -23,11 +22,9 @@ function Vote() {
       console.log('Voter public key : ',voterAddress);
 
       //creating a vote
-      // const txs = new Transaction(voterAddress, candidate, Number(vote));
-      // const signature = txs.signTransaction(keyPair);
-
-      const signature = sha256( 1 + 'helllo');
-      console.log(JSON.parse(localData))
+      const txs = new Transaction(voterAddress, candidate, Number(vote));
+      const signature = txs.signTransaction(keyPair);
+      console.log(signature)
     }
 
   }
