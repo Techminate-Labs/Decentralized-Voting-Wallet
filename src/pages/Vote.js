@@ -1,12 +1,34 @@
 import { useState } from 'react';
+window.Buffer = window.Buffer || require("buffer").Buffer;
 
 function Vote() {
-  const Transaction = require('../utilities/Transaction');
-  const EdDSA = require('elliptic').eddsa;
-  const ec = new EdDSA('ed25519')
+  var nacl = require('tweetnacl');
 
   const [candidate, setCandidate] = useState('');
+
+  function generateSignature (message, keyPair) {
+    // Encode message to Uint8Array
+    const encodedMessage = new TextEncoder().encode(JSON.stringify(message))
+    return Buffer.from(nacl.sign(encodedMessage, keyPair.secretKey)).toString('hex').substring(0, 128);
+  }
+
+  function generateKeyPair (signingKey) {
+    // Convert signingKey from string to Uint8Array
+    const key = new Uint8Array(64)
+    const encodedKey = new Uint8Array(Buffer.from(signingKey, 'hex'))
+    key.set(encodedKey)
+    // Generating nacl keyPair Object
+    const keyPair = nacl.sign.keyPair.fromSeed(encodedKey);
+    return keyPair;
+  }
+
+  function isValid (key) {
+    if (!/^[A-F0-9]+$/i.test(key)) return false
   
+    if (key.length !== 64) return false
+  
+    return true
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,17 +36,13 @@ function Vote() {
     const localData = localStorage.getItem('wallet');
     const voterData = JSON.parse(localData);
     if(localData !== null){
-      const keyPair = ec.keyFromSecret(voterData.private_key);
-      const voterAddress = keyPair.getPublic('hex');
+      const keyPair = generateKeyPair(voterData.private_key);
+      const voterAddress = Buffer.from(keyPair.publicKey).toString('hex');
       //might have a check in the db
-      const vote = voterData.vote;
-      console.log('Voter private key : ',voterData.private_key);
-      console.log('Voter public key : ',voterAddress);
-
+      // const msgHash = nacl.hash(voterAddress + candidate + voterData.vote + Date.now());
+      const sign = generateSignature ('hello', keyPair)
+      console.log(sign)
       //creating a vote
-      const txs = new Transaction(voterAddress, candidate, Number(vote));
-      const signature = txs.signTransaction(keyPair);
-      console.log(signature)
     }
 
   }
